@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phishing URL Checker</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Phishing URL Checker</h1>
+        <form method="POST">
+            <input type="text" name="url" placeholder="Enter a URL..." required>
+            <button type="submit">Check URL</button>
+        </form>
+
+        {% if result %}
+            <div class="result-box">
+                <h2>Result</h2>
+                {% if not result.valid %}
+                    <p class="danger">Invalid URL!</p>
+                {% else %}
+                    {% if result.risk_score <= 20 %}
+                        <p class="safe">✅ SAFE (Risk Score: {{ result.risk_score }})</p>
+                    {% elif result.risk_score <= 60 %}
+                        <p class="warning">⚠️ SUSPICIOUS (Risk Score: {{ result.risk_score }})</p>
+                    {% else %}
+                        <p class="danger">🚨 RISKY (Risk Score: {{ result.risk_score }})</p>
+                    {% endif %}
+
+                    <p><strong>Valid Format:</strong> {{ result.valid }}</p>
+                    <p><strong>Reachable:</strong> {{ result.reachable }}</p>
+
+                    {% if result.issues %}
+                        <h3>Issues Detected:</h3>
+                        <ul>
+                        {% for issue in result.issues %}
+                            <li>{{ issue }}</li>
+                        {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p>No suspicious patterns found.</p>
+                    {% endif %}
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>
+<p>
+    @ URL Checker.
+</p>
